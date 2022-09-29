@@ -4,7 +4,7 @@
 password="newrelic"
 
 # Create user
-sudo mysql -e "CREATE USER 'newrelic'@'localhost' IDENTIFIED BY $password WITH MAX_USER_CONNECTIONS 5;"
+sudo mysql -e "CREATE USER 'newrelic'@'localhost' IDENTIFIED BY '$password' WITH MAX_USER_CONNECTIONS 5;"
 
 # Grant replication privileges
 sudo mysql -e "GRANT REPLICATION CLIENT ON *.* TO 'newrelic'@'localhost' WITH MAX_USER_CONNECTIONS 5;"

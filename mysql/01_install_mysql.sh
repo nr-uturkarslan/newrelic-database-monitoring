@@ -7,12 +7,15 @@ echo Y | sudo apt-get upgrade
 # Install MySQL Server
 echo Y | sudo apt install mysql-server
 
+# Sleep for a while until server comes up
+sleep 4
+
 # Create user
 sudo mysql --execute="grant all privileges on *.* to 'myuser'@'%' identified by 'password';"
 sudo mysql --execute="flush privileges;"
 
 # Allow remote access
-sed -i s/"bind-address            = 127.0.0.1"/"bind-address            = 0.0.0.0"/g /etc/mysql/mysql.conf.d/mysqld.cnf
+sudo sed -i s/"127.0.0.1"/"0.0.0.0"/g /etc/mysql/mysql.conf.d/mysqld.cnf
 
 # Restart MySQL
 sudo systemctl restart mysql
