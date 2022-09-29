@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -11,14 +13,16 @@ var DB_DRIVER string = "mysql"
 
 func main() {
 
-	// Credentials
+	// Config
+	ipAddress := os.Getenv("MYSQL_IP")
+	username := "myuser"
+	password := os.Getenv("PASSWORD")
 	dbName := "mydb"
-	username := "root"
-	password := "password"
 	tableName := "mytable"
 
-	fmt.Println("Connecting to MySQL...")
-	db, err := sql.Open(DB_DRIVER, username+":"+password+"@tcp(mysql:3306)/")
+	conn := username + ":" + password + "@tcp(" + ipAddress + ":3306)/"
+	fmt.Println("Connecting to MySQL [" + conn + "]...")
+	db, err := sql.Open(DB_DRIVER, conn)
 	if err != nil {
 		panic(err)
 	}
@@ -46,11 +50,17 @@ func main() {
 	}
 	fmt.Println(" -> Created table.")
 
-	fmt.Println("Inserting value...")
-	insert, err := db.Query("INSERT INTO " + tableName + "(data) VALUES ( 'TEST' )")
-	if err != nil {
-		panic(err.Error())
+	for {
+		func() {
+			fmt.Println("Inserting value...")
+			insert, err := db.Query("INSERT INTO " + tableName + "(data) VALUES ( 'TEST' )")
+			if err != nil {
+				panic(err.Error())
+			}
+			defer insert.Close()
+			fmt.Println(" -> Inserted value.")
+
+			time.Sleep(2 * time.Second)
+		}()
 	}
-	defer insert.Close()
-	fmt.Println(" -> Inserted value.")
 }
